@@ -1,7 +1,17 @@
 export interface Budynek {
   id: string;
   nazwa: string;
-  pietra: Pietro[];
+  pietra: {
+    id: string;
+    numer: number;
+    budynekId: string;
+    sale: {
+      id: string;
+      nazwa: string;
+      liczbaMiejsc: number;
+      pietroId: string;
+    }[];
+  }[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -10,7 +20,7 @@ export interface Pietro {
   id: string;
   numer: number;
   budynekId: string;
-  budynek: Budynek;
+  budynek: Omit<Budynek, 'pietra'>;
   sale: Sala[];
   createdAt: Date;
   updatedAt: Date;
@@ -21,7 +31,15 @@ export interface Sala {
   nazwa: string;
   liczbaMiejsc: number;
   pietroId: string;
-  pietro: Pietro;
+  pietro: {
+    id: string;
+    numer: number;
+    budynekId: string;
+    budynek: {
+      id: string;
+      nazwa: string;
+    };
+  };
   createdAt: Date;
   updatedAt: Date;
 }

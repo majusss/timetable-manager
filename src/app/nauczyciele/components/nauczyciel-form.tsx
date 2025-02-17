@@ -1,19 +1,19 @@
 "use client";
 
+import { createNauczyciel } from "@/actions/nauczyciele";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Przedmiot } from "@prisma/client";
-import { useRef, useState } from "react";
-import { useFormStatus } from "react-dom";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Przedmiot } from "@prisma/client";
 import { ChevronDown } from "lucide-react";
-import { createNauczyciel } from "@/actions/nauczyciele";
+import { useRef, useState } from "react";
+import { useFormStatus } from "react-dom";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -81,7 +81,9 @@ export function NauczycielForm({ przedmioty }: { przedmioty: Przedmiot[] }) {
                         ]);
                       } else {
                         setSelectedPrzedmioty(
-                          selectedPrzedmioty.filter((id) => id !== przedmiot.id)
+                          selectedPrzedmioty.filter(
+                            (id) => id !== przedmiot.id,
+                          ),
                         );
                       }
                     }}

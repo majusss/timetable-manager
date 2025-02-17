@@ -1,13 +1,15 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { getBudynki } from "@/actions/budynki";
-import { getPietra } from "@/actions/pietra";
-import { getSale } from "@/actions/sale";
-import { getPrzedmioty } from "@/actions/przedmioty";
 import { getNauczyciele } from "@/actions/nauczyciele";
 import { getOddzialy } from "@/actions/oddzialy";
+import { getPietra } from "@/actions/pietra";
+import { getPrzedmioty } from "@/actions/przedmioty";
+import { getSale } from "@/actions/sale";
+import { DangerZone } from "@/components/danger-zone";
+import { ImportDialog } from "@/components/import/import-dialog";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +25,7 @@ export default async function HomePage() {
     ]);
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="container mx-auto p-6 space-y-6">
       <h1 className="text-3xl font-bold mb-8">Panel zarządzania szkołą</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -98,9 +100,53 @@ export default async function HomePage() {
               Łączna liczba lekcji:{" "}
               {oddzialy.reduce(
                 (sum, oddzial) => sum + oddzial.liczbaLekcjiTygodnia,
-                0
+                0,
               )}
             </p>
+          </CardContent>
+        </Card>
+
+        {/* Przedmioty */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Przedmioty</CardTitle>
+            <Link href="/przedmioty">
+              <Button variant="outline" size="sm">
+                Zarządzaj
+              </Button>
+            </Link>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{przedmioty.length}</div>
+            <p className="text-xs text-muted-foreground">
+              Średnia waga:{" "}
+              {(
+                przedmioty.reduce((sum, p) => sum + p.waga, 0) /
+                (przedmioty.length || 1)
+              ).toFixed(1)}
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Import z Optivum */}
+        <Card className="md:col-span-2 lg:col-span-3 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/10 dark:to-blue-900/20">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0">
+            <div>
+              <CardTitle className="text-lg font-medium">
+                Import z UONET+ Optivum
+              </CardTitle>
+              <p className="text-sm text-muted-foreground mt-1">
+                Zaimportuj dane z planu lekcji Optivum
+              </p>
+            </div>
+            <ImportDialog />
+          </CardHeader>
+          <CardContent>
+            <div className="text-sm text-muted-foreground space-y-1">
+              <p>• Nauczyciele i przedmioty</p>
+              <p>• Sale lekcyjne</p>
+              <p>• Oddziały i ich plany lekcji</p>
+            </div>
           </CardContent>
         </Card>
 
@@ -150,6 +196,10 @@ export default async function HomePage() {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      <div className="grid gap-4">
+        <DangerZone />
       </div>
     </div>
   );

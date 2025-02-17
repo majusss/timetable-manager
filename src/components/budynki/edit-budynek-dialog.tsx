@@ -1,5 +1,6 @@
 "use client";
 
+import { updateBudynek } from "@/actions/budynki";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -8,11 +9,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Pencil } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Pencil } from "lucide-react";
 import { useState } from "react";
-import { updateBudynek } from "@/actions/budynki";
 
 export function EditBudynekDialog({
   budynek,

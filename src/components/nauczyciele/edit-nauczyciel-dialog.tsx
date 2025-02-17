@@ -1,6 +1,8 @@
 "use client";
 
+import { updateNauczyciel } from "@/actions/nauczyciele";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -8,18 +10,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Checkbox } from "@/components/ui/checkbox";
-import { ChevronDown, Pencil } from "lucide-react";
-import { updateNauczyciel } from "@/actions/nauczyciele";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Nauczyciel, Przedmiot } from "@prisma/client";
+import { ChevronDown, Pencil } from "lucide-react";
+import { useState } from "react";
 
 interface EditNauczycielDialogProps {
   nauczyciel: Nauczyciel & {
@@ -34,7 +34,7 @@ export function EditNauczycielDialog({
 }: EditNauczycielDialogProps) {
   const [open, setOpen] = useState(false);
   const [selectedPrzedmioty, setSelectedPrzedmioty] = useState<string[]>(
-    nauczyciel.przedmioty.map((p: Przedmiot) => p.id)
+    nauczyciel.przedmioty.map((p: Przedmiot) => p.id),
   );
 
   return (
@@ -109,8 +109,8 @@ export function EditNauczycielDialog({
                           } else {
                             setSelectedPrzedmioty(
                               selectedPrzedmioty.filter(
-                                (id) => id !== przedmiot.id
-                              )
+                                (id) => id !== przedmiot.id,
+                              ),
                             );
                           }
                         }}

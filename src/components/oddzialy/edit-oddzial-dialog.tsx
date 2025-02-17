@@ -1,5 +1,6 @@
 "use client";
 
+import { updateOddzial } from "@/actions/oddzialy";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -8,11 +9,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Pencil } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Pencil } from "lucide-react";
 import { useState } from "react";
-import { updateOddzial } from "@/actions/oddzialy";
 
 export function EditOddzialDialog({
   oddzial,

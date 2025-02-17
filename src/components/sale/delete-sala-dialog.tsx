@@ -1,5 +1,6 @@
 "use client";
 
+import { deleteSala } from "@/actions/sale";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,7 +14,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
-import { deleteSala } from "@/actions/sale";
 
 export function DeleteSalaDialog({
   sala,

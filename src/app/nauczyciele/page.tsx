@@ -1,12 +1,12 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { BackButton } from "@/components/back-button";
-import { EditNauczycielDialog } from "@/components/nauczyciele/edit-nauczyciel-dialog";
-import { DeleteNauczycielDialog } from "@/components/nauczyciele/delete-nauczyciel-dialog";
-import { NauczycielForm } from "./components/nauczyciel-form";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { getNauczyciele } from "@/actions/nauczyciele";
 import { getPrzedmioty } from "@/actions/przedmioty";
+import { BackButton } from "@/components/back-button";
+import { DeleteNauczycielDialog } from "@/components/nauczyciele/delete-nauczyciel-dialog";
+import { EditNauczycielDialog } from "@/components/nauczyciele/edit-nauczyciel-dialog";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
+import { NauczycielForm } from "./components/nauczyciel-form";
 
 export default async function NauczycieleStrona() {
   const [nauczyciele, przedmioty] = await Promise.all([

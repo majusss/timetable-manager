@@ -1,7 +1,7 @@
 "use client";
 
+import { createBudynek } from "@/actions/budynki";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
@@ -10,11 +10,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useRouter } from "next/navigation";
-import { createBudynek } from "@/actions/budynki";
 
 const formSchema = z.object({
   nazwa: z.string().min(1, "Nazwa jest wymagana"),

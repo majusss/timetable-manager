@@ -1,6 +1,6 @@
 "use client";
 
-import { updateSala } from "@/actions/sale";
+import { createSala } from "@/actions/sale";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -18,26 +18,37 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
 import { formatPietroNumer } from "@/lib/utils";
-import { Budynek, Sala } from "@/types";
-import { useState } from "react";
+import { Budynek } from "@/types";
+import { useRef, useState } from "react";
+import { useFormStatus } from "react-dom";
+import { useToast } from "@/hooks/use-toast";
 
-interface EditSalaDialogProps {
-  sala: Sala;
+function SubmitButton({ isLoading }: { isLoading: boolean }) {
+  const { pending } = useFormStatus();
+  return (
+    <Button type="submit" disabled={pending || isLoading}>
+      {pending ? "Dodawanie..." : "Dodaj salę"}
+    </Button>
+  );
+}
+
+interface AddSalaDialogProps {
   budynki: Budynek[];
 }
 
-export function EditSalaDialog({ sala, budynki }: EditSalaDialogProps) {
-  const [open, setOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    nazwa: sala.nazwa,
-    liczbaMiejsc: sala.liczbaMiejsc.toString(),
-    budynekId: sala.pietro.budynek.id,
-    pietroId: sala.pietro.id,
-  });
+export function AddSalaDialog({ budynki }: AddSalaDialogProps) {  
   const { toast } = useToast();
+  const [open, setOpen] = useState(false);
+  const [selectedBudynekId, setSelectedBudynekId] = useState("");
+  const ref = useRef<HTMLFormElement>(null);
+  const [formData, setFormData] = useState({
+    nazwa: "",
+    liczbaMiejsc: "30",
+    budynekId: "",
+    pietroId: "",
+  });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async () => {
     if (!formData.nazwa || !formData.pietroId || !formData.liczbaMiejsc) {
@@ -51,7 +62,7 @@ export function EditSalaDialog({ sala, budynki }: EditSalaDialogProps) {
 
     setIsLoading(true);
     try {
-      await updateSala(sala.id, {
+      await createSala({
         nazwa: formData.nazwa,
         liczbaMiejsc: parseInt(formData.liczbaMiejsc),
         pietroId: formData.pietroId,
@@ -59,14 +70,20 @@ export function EditSalaDialog({ sala, budynki }: EditSalaDialogProps) {
 
       toast({
         title: "Sukces",
-        description: "Sala została zaktualizowana",
+        description: "Sala została dodana",
       });
       setOpen(false);
+      setFormData({
+        nazwa: "",
+        liczbaMiejsc: "30",
+        budynekId: "",
+        pietroId: "",
+      });
     } catch (error) {
       console.error(error);
       toast({
-        title: "Błąd",
-        description: "Wystąpił błąd podczas aktualizacji sali",
+        title: "Błąd", 
+        description: "Wystąpił błąd podczas dodawania sali",
         variant: "destructive",
       });
     } finally {
@@ -77,50 +94,46 @@ export function EditSalaDialog({ sala, budynki }: EditSalaDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          Edytuj
-        </Button>
+        <Button>Dodaj salę</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edytuj salę</DialogTitle>
+          <DialogTitle>Dodaj nową salę</DialogTitle>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid gap-2">
+        <form
+          ref={ref}
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit();
+          }}
+          className="space-y-4"
+        >
+          <div>
             <Label htmlFor="nazwa">Nazwa sali</Label>
-            <Input
-              id="nazwa"
-              value={formData.nazwa}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, nazwa: e.target.value }))
-              }
-            />
+            <Input id="nazwa" name="nazwa" required value={formData.nazwa} onChange={(e) => setFormData({ ...formData, nazwa: e.target.value })} />
           </div>
-          <div className="grid gap-2">
+          <div>
             <Label htmlFor="liczbaMiejsc">Liczba miejsc</Label>
             <Input
               id="liczbaMiejsc"
+              name="liczbaMiejsc"
               type="number"
               min="0"
+              defaultValue="30"
+              required
               value={formData.liczbaMiejsc}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  liczbaMiejsc: e.target.value,
-                }))
-              }
+              onChange={(e) => setFormData({ ...formData, liczbaMiejsc: e.target.value })}
             />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="budynek">Budynek</Label>
             <Select
+              name="budynekId"
+              required
               value={formData.budynekId}
               onValueChange={(value) => {
-                setFormData((prev) => ({
-                  ...prev,
-                  budynekId: value,
-                  pietroId: "",
-                }));
+                setSelectedBudynekId(value);
+                setFormData({ ...formData, budynekId: value });
               }}
             >
               <SelectTrigger>
@@ -135,21 +148,16 @@ export function EditSalaDialog({ sala, budynki }: EditSalaDialogProps) {
               </SelectContent>
             </Select>
           </div>
-          {formData.budynekId && (
+          {selectedBudynekId && (
             <div className="grid gap-2">
               <Label htmlFor="pietro">Piętro</Label>
-              <Select
-                value={formData.pietroId}
-                onValueChange={(value) =>
-                  setFormData((prev) => ({ ...prev, pietroId: value }))
-                }
-              >
+              <Select name="pietroId" required value={formData.pietroId} onValueChange={(value) => setFormData({ ...formData, pietroId: value })}>
                 <SelectTrigger>
                   <SelectValue placeholder="Wybierz piętro" />
                 </SelectTrigger>
                 <SelectContent>
                   {budynki
-                    .find((b) => b.id === formData.budynekId)
+                    .find((b) => b.id === selectedBudynekId)
                     ?.pietra.map((pietro) => (
                       <SelectItem key={pietro.id} value={pietro.id}>
                         {formatPietroNumer(pietro.numer)}
@@ -159,15 +167,8 @@ export function EditSalaDialog({ sala, budynki }: EditSalaDialogProps) {
               </Select>
             </div>
           )}
-        </div>
-        <div className="flex justify-end gap-3">
-          <Button variant="outline" onClick={() => setOpen(false)}>
-            Anuluj
-          </Button>
-          <Button onClick={handleSubmit} disabled={isLoading}>
-            {isLoading ? "Zapisywanie..." : "Zapisz"}
-          </Button>
-        </div>
+          <SubmitButton isLoading={isLoading} />
+        </form>
       </DialogContent>
     </Dialog>
   );

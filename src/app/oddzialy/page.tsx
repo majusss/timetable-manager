@@ -1,9 +1,9 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { BackButton } from "@/components/back-button";
-import { EditOddzialDialog } from "@/components/oddzialy/edit-oddzial-dialog";
-import { DeleteOddzialDialog } from "@/components/oddzialy/delete-oddzial-dialog";
-import { OddzialForm } from "./components/oddzial-form";
 import { getOddzialy } from "@/actions/oddzialy";
+import { BackButton } from "@/components/back-button";
+import { DeleteOddzialDialog } from "@/components/oddzialy/delete-oddzial-dialog";
+import { EditOddzialDialog } from "@/components/oddzialy/edit-oddzial-dialog";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { OddzialForm } from "./components/oddzial-form";
 
 export default async function OddzialyPage() {
   const oddzialy = await getOddzialy();

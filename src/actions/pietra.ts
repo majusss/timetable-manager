@@ -32,8 +32,16 @@ export async function getPietro(id: string) {
     where: { id },
     include: {
       budynek: true,
-      sale: true,
-    },
+      sale: {
+        include: {
+          pietro: {
+            include: {
+              budynek: true
+            }
+          }
+        }
+      }
+    }
   });
 }
 

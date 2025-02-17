@@ -3,22 +3,26 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
-export async function createSala(formData: FormData) {
-  const nazwa = formData.get("nazwa") as string;
-  const liczbaMiejsc = parseInt(formData.get("liczbaMiejsc") as string);
-  const pietroId = formData.get("pietroId") as string;
-
-  const pietro = await db.pietro.findUnique({
-    where: { id: pietroId },
-    select: { budynekId: true },
-  });
-
+export async function createSala({
+  nazwa,
+  liczbaMiejsc,
+  pietroId,
+}: {
+  nazwa: string;
+  liczbaMiejsc: number;
+  pietroId: string;
+}) {
   await db.sala.create({
     data: {
       nazwa,
       liczbaMiejsc,
       pietroId,
     },
+  });
+
+  const pietro = await db.pietro.findUnique({
+    where: { id: pietroId },
+    select: { budynekId: true },
   });
 
   revalidatePath(`/budynki/${pietro?.budynekId}/pietra/${pietroId}/sale`);
@@ -30,16 +34,21 @@ export async function getSale() {
   });
 }
 
-export async function updateSala(id: string, formData: FormData) {
-  const nazwa = formData.get("nazwa") as string;
-  const liczbaMiejsc = parseInt(formData.get("liczbaMiejsc") as string);
-
+export async function updateSala(
+  id: string,
+  {
+    nazwa,
+    liczbaMiejsc,
+    pietroId,
+  }: {
+    nazwa: string;
+    liczbaMiejsc: number;
+    pietroId: string;
+  }
+) {
   const sala = await db.sala.findUnique({
     where: { id },
-    select: {
-      pietroId: true,
-      pietro: { select: { budynekId: true } },
-    },
+    select: { pietro: { select: { budynekId: true } } },
   });
 
   await db.sala.update({
@@ -47,24 +56,20 @@ export async function updateSala(id: string, formData: FormData) {
     data: {
       nazwa,
       liczbaMiejsc,
+      pietroId,
     },
   });
 
-  revalidatePath(
-    `/budynki/${sala?.pietro.budynekId}/pietra/${sala?.pietroId}/sale`
-  );
+  revalidatePath(`/budynki/${sala?.pietro.budynekId}/pietra/${pietroId}/sale`);
 }
 
 export async function deleteSala(id: string) {
   const sala = await db.sala.findUnique({
     where: { id },
-    select: {
-      pietroId: true,
-      pietro: { select: { budynekId: true } },
-    },
+    select: { pietro: { select: { budynekId: true } }, pietroId: true },
   });
+
   await db.sala.delete({ where: { id } });
-  revalidatePath(
-    `/budynki/${sala?.pietro.budynekId}/pietra/${sala?.pietroId}/sale`
-  );
+
+  revalidatePath(`/budynki/${sala?.pietro.budynekId}/pietra/${sala?.pietroId}/sale`);
 }

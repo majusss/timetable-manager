@@ -1,11 +1,11 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { BudynekForm } from "./components/budynek-form";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { BackButton } from "@/components/back-button";
-import { EditBudynekDialog } from "@/components/budynki/edit-budynek-dialog";
-import { DeleteBudynekDialog } from "@/components/budynki/delete-budynek-dialog";
 import { getBudynki } from "@/actions/budynki";
+import { BackButton } from "@/components/back-button";
+import { DeleteBudynekDialog } from "@/components/budynki/delete-budynek-dialog";
+import { EditBudynekDialog } from "@/components/budynki/edit-budynek-dialog";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
+import { BudynekForm } from "./components/budynek-form";
 
 export default async function BudynkiPage() {
   const budynki = await getBudynki();

@@ -1,12 +1,13 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { BackButton } from "@/components/back-button";
-import { EditPietroDialog } from "@/components/pietra/edit-pietro-dialog";
-import { DeletePietroDialog } from "@/components/pietra/delete-pietro-dialog";
 import { getBudynek } from "@/actions/budynki";
 import { createPietro } from "@/actions/pietra";
+import { BackButton } from "@/components/back-button";
+import { DeletePietroDialog } from "@/components/pietra/delete-pietro-dialog";
+import { EditPietroDialog } from "@/components/pietra/edit-pietro-dialog";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatPietroNumer } from "@/lib/utils";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
 export default async function BudynekPietraPage({
   params,
@@ -53,28 +54,38 @@ export default async function BudynekPietraPage({
           <CardTitle>Lista pięter</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {budynek.pietra.map((pietro) => (
-            <div
-              key={pietro.id}
-              className="flex items-center justify-between p-4 rounded-lg border"
-            >
-              <div className="space-y-1">
-                <div className="font-medium">Piętro {pietro.numer}</div>
-                <div className="text-sm text-muted-foreground">
-                  Liczba sal: {pietro.sale.length}
+          {budynek.pietra.length > 0 ? (
+            budynek.pietra.map((pietro) => (
+              <div
+                key={pietro.id}
+                className="flex items-center justify-between p-4 rounded-lg border"
+              >
+                <div className="space-y-1">
+                  <div className="font-medium">
+                    {formatPietroNumer(pietro.numer)}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Liczba sal: {pietro.sale.length}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Link
+                    href={`/budynki/${budynek.id}/pietra/${pietro.id}/sale`}
+                  >
+                    <Button variant="outline" size="sm">
+                      Zarządzaj salami
+                    </Button>
+                  </Link>
+                  <EditPietroDialog pietro={pietro} />
+                  <DeletePietroDialog pietro={pietro} />
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Link href={`/budynki/${budynek.id}/pietra/${pietro.id}/sale`}>
-                  <Button variant="outline" size="sm">
-                    Zarządzaj salami
-                  </Button>
-                </Link>
-                <EditPietroDialog pietro={pietro} />
-                <DeletePietroDialog pietro={pietro} />
-              </div>
+            ))
+          ) : (
+            <div className="text-center text-sm text-muted-foreground">
+              Brak pięter
             </div>
-          ))}
+          )}
         </CardContent>
       </Card>
     </div>

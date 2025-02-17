@@ -1,9 +1,9 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { PietroForm } from "./components/pietro-form";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { getBudynki } from "@/actions/budynki";
 import { getPietra } from "@/actions/pietra";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
+import { PietroForm } from "./components/pietro-form";
 
 export default async function PietraPage() {
   const [budynki, pietra] = await Promise.all([getBudynki(), getPietra()]);

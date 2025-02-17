@@ -1,10 +1,10 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { BackButton } from "@/components/back-button";
-import { EditPrzedmiotDialog } from "@/components/przedmioty/edit-przedmiot-dialog";
-import { DeletePrzedmiotDialog } from "@/components/przedmioty/delete-przedmiot-dialog";
-import { PrzedmiotForm } from "./components/przedmiot-form";
-import { headers } from "next/headers";
 import { getPrzedmioty } from "@/actions/przedmioty";
+import { BackButton } from "@/components/back-button";
+import { DeletePrzedmiotDialog } from "@/components/przedmioty/delete-przedmiot-dialog";
+import { EditPrzedmiotDialog } from "@/components/przedmioty/edit-przedmiot-dialog";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { headers } from "next/headers";
+import { PrzedmiotForm } from "./components/przedmiot-form";
 
 export default async function PrzedmiotyPage() {
   const przedmioty = await getPrzedmioty();

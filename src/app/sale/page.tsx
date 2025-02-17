@@ -1,58 +1,31 @@
 import { getBudynki } from "@/actions/budynki";
-import { getPietro } from "@/actions/pietra";
+import { getSale } from "@/actions/sale";
 import { BackButton } from "@/components/back-button";
+import { AddSalaDialog } from "@/components/sale/add-sala-dialog";
 import { DeleteSalaDialog } from "@/components/sale/delete-sala-dialog";
 import { EditSalaDialog } from "@/components/sale/edit-sala-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatPietroNumer } from "@/lib/utils";
-import { notFound } from "next/navigation";
-import { SalaForm } from "./components/sala-form";
-import { Sala } from "@/types";
 
-interface Props {
-  params: Promise<{
-    budynekId: string;
-    pietroId: string;
-  }>;
-}
-
-  export default async function PietroSalePage({ params }: Props) {
-  const [pietro, budynki] = await Promise.all([
-    getPietro((await params).pietroId),
-    getBudynki(),
-  ]);
-
-  if (!pietro) {
-    notFound();
-  }
+export default async function SalePage() {
+  const [sale, budynki] = await Promise.all([getSale(), getBudynki()]);
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <div>
-        <BackButton
-          href={`/budynki/${(await params).budynekId}/pietra`}
-          label={`Wróć do pięter budynku ${pietro.budynek.nazwa}`}
-        />
-        <h1 className="text-3xl font-bold mt-2">
-          Sale na piętrze {formatPietroNumer(pietro.numer)}
-        </h1>
+      <div className="flex justify-between items-center">
+        <div>
+          <BackButton href="/" label="Wróć do strony głównej" />
+          <h1 className="text-3xl font-bold mt-2">Lista sal</h1>
+        </div>
+        <AddSalaDialog budynki={budynki} />
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Dodaj salę</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <SalaForm pietroId={pietro.id} />
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Lista sal</CardTitle>
+          <CardTitle>Sale</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {pietro.sale.map((sala: Sala) => (
+          {sale.map((sala) => (
             <div
               key={sala.id}
               className="flex items-center justify-between p-4 rounded-lg border"
@@ -62,6 +35,10 @@ interface Props {
                 <div className="text-sm text-muted-foreground">
                   Liczba miejsc: {sala.liczbaMiejsc}
                 </div>
+                <div className="text-sm text-muted-foreground">
+                  Lokalizacja: {sala.pietro.budynek.nazwa},{" "}
+                  {formatPietroNumer(sala.pietro.numer)}
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 <EditSalaDialog sala={sala} budynki={budynki} />
@@ -69,9 +46,9 @@ interface Props {
               </div>
             </div>
           ))}
-          {pietro.sale.length === 0 && (
+          {sale.length === 0 && (
             <div className="text-center text-muted-foreground py-8">
-              Brak sal na tym piętrze
+              Brak sal
             </div>
           )}
         </CardContent>
