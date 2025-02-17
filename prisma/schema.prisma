@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Oddzial {
+  id                   String   @id @default(cuid())
+  nazwa                String   @unique
+  liczbaLekcjiTygodnia Int
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+model Nauczyciel {
+  id         String      @id @default(cuid())
+  nazwa      String
+  skrot      String      @unique
+  przedmioty Przedmiot[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model Przedmiot {
+  id          String       @id @default(cuid())
+  nazwa       String       @unique
+  waga        Int
+  nauczyciele Nauczyciel[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Sala {
+  id           String   @id @default(cuid())
+  nazwa        String   @unique
+  liczbaMiejsc Int
+  pietroId     String
+  pietro       Pietro   @relation("PietroSale", fields: [pietroId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Pietro {
+  id        String   @id @default(cuid())
+  numer     Int
+  budynekId String
+  budynek   Budynek  @relation("BudynekPietra", fields: [budynekId], references: [id], onDelete: Cascade)
+  sale      Sala[]   @relation("PietroSale")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([numer, budynekId])
+}
+
+model Budynek {
+  id        String   @id @default(cuid())
+  nazwa     String   @unique
+  pietra    Pietro[] @relation("BudynekPietra")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
