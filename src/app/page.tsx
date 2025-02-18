@@ -11,7 +11,7 @@ import { ImportDialog } from "@/components/import/import-dialog";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
+// export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const [budynki, pietra, sale, przedmioty, nauczyciele, oddzialy] =
@@ -118,13 +118,13 @@ export default async function HomePage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{przedmioty.length}</div>
-            <p className="text-xs text-muted-foreground">
+            {/* <p className="text-xs text-muted-foreground">
               Średnia waga:{" "}
               {(
                 przedmioty.reduce((sum, p) => sum + p.waga, 0) /
                 (przedmioty.length || 1)
               ).toFixed(1)}
-            </p>
+            </p> */}
           </CardContent>
         </Card>
 

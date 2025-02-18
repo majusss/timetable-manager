@@ -18,6 +18,7 @@ interface ImportProgressDialogProps {
   data: List;
   config: {
     importConfig: {
+      url: string;
       oddzialy: boolean;
       sale: boolean;
       nauczyciele: boolean;
@@ -80,7 +81,10 @@ export function ImportProgressDialog({
             currentItem: `Importowanie oddziału: ${oddzial.name}`,
           }));
 
-          const result = await addOddzial(oddzial.name);
+          const result = await addOddzial(
+            oddzial.name,
+            `${config.importConfig.url}/plany/o${oddzial.value}.html`,
+          );
 
           if (!result.success) {
             errors.push(

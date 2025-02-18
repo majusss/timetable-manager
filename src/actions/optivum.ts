@@ -1,12 +1,15 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { Timetable, TimetableList } from "@majusss/timetable-parser";
+import { Table, Timetable, TimetableList } from "@majusss/timetable-parser";
 import { revalidatePath } from "next/cache";
 
 export async function getDataToImport(url: string) {
   try {
-    const response = await fetch(url);
+    const fetchUrl = new URL(url);
+    const response = await fetch(fetchUrl.href, {
+      redirect: "follow",
+    });
     if (!response.ok) {
       throw new Error("Nie udało się pobrać planu lekcji");
     }
@@ -15,9 +18,12 @@ export async function getDataToImport(url: string) {
     const timetable = new Timetable(html);
     const title = timetable.getTitle();
     const listPath = timetable.getListPath();
+    const listUrl = new URL(`${fetchUrl.href}/${listPath}`);
 
-    const listResponse = await fetch(url + listPath);
-    if (!response.ok) {
+    const listResponse = await fetch(listUrl.href, {
+      redirect: "follow",
+    });
+    if (!listResponse.ok) {
       throw new Error("Nie udało się pobrać planu lekcji");
     }
 
@@ -38,15 +44,43 @@ export async function getDataToImport(url: string) {
   }
 }
 
-export async function addOddzial(name: string) {
-  try {
-    const data = {
-      nazwa: name,
-      liczbaLekcjiTygodnia: 0,
-    };
+async function getLiczbaLekcjiTygodnia(url: string) {
+  const fetchUrl = new URL(url);
+  const response = await fetch(fetchUrl.href, {
+    redirect: "follow",
+  });
+  if (!response.ok) {
+    throw new Error("Nie udało się pobrać planu lekcji");
+  }
+  const html = await response.text();
 
+  const table = new Table(html);
+  const hours = await table.getDays();
+
+  const firstGroupName = hours
+    .flat()
+    .find((lesson) => lesson.length > 1)?.[0].groupName;
+  const lessons = hours.flat().filter((lesson) => {
+    const isLessonEmpty = lesson.length === 0;
+    if (isLessonEmpty) return false;
+
+    const isGrupSlited = "groupName" in lesson[0];
+    const isLessonForFirstGroup = lesson[0]?.groupName == firstGroupName;
+
+    if (!isGrupSlited) return true;
+    if (isGrupSlited && isLessonForFirstGroup) return true;
+  });
+
+  return lessons.length;
+}
+
+export async function addOddzial(name: string, url: string) {
+  try {
     await db.oddzial.create({
-      data,
+      data: {
+        nazwa: name,
+        liczbaLekcjiTygodnia: await getLiczbaLekcjiTygodnia(url),
+      },
     });
 
     revalidatePath("/");
@@ -75,7 +109,13 @@ export async function addSala(
         pietroId: config.pietroId,
       },
     });
+
     revalidatePath("/");
+    revalidatePath("/sale");
+    revalidatePath(
+      `/budynki/${config.pietroId}/pietra/${config.pietroId}/sale`,
+    );
+
     return { success: true };
   } catch (error) {
     console.log("Błąd dodawania sali:", error);
@@ -98,7 +138,10 @@ export async function addNauczyciel(nauczyciel: {
         skrot: nauczyciel.short,
       },
     });
+
     revalidatePath("/");
+    revalidatePath("/nauczyciele");
+
     return { success: true };
   } catch (error) {
     console.log("Błąd dodawania nauczyciela:", error);

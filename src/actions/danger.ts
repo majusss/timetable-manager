@@ -13,6 +13,12 @@ export async function clearDatabase() {
     await db.przedmiot.deleteMany();
 
     revalidatePath("/");
+    revalidatePath("/budynki");
+    revalidatePath("/sale");
+    revalidatePath("/nauczyciele");
+    revalidatePath("/oddzialy");
+    revalidatePath("/przedmioty");
+
     return { success: true };
   } catch (error) {
     console.log("Błąd czyszczenia bazy:", error);

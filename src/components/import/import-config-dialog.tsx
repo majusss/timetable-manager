@@ -21,10 +21,11 @@ import { useToast } from "@/hooks/use-toast";
 import { formatPietroNumer } from "@/lib/utils";
 import { Budynek } from "@/types";
 import { List } from "@majusss/timetable-parser";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ImportProgressDialog } from "./import-progress-dialog";
 
 interface ImportConfigDialogProps {
+  url: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   data: List;
@@ -32,6 +33,7 @@ interface ImportConfigDialogProps {
 }
 
 export function ImportConfigDialog({
+  url,
   open,
   onOpenChange,
   data,
@@ -39,6 +41,7 @@ export function ImportConfigDialog({
 }: ImportConfigDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [importConfig, setImportConfig] = useState({
+    url,
     oddzialy: true,
     sale: !!data.rooms?.length,
     nauczyciele: !!data.teachers?.length,
@@ -54,6 +57,7 @@ export function ImportConfigDialog({
   const handleImportComplete = () => {
     setIsLoading(false);
     setImportConfig({
+      url,
       oddzialy: true,
       sale: !!data.rooms?.length,
       nauczyciele: !!data.teachers?.length,
@@ -112,6 +116,10 @@ export function ImportConfigDialog({
       !importConfig.nauczyciele) ||
     (importConfig.sale &&
       (!defaultConfig.pietroId || !defaultConfig.liczbaMiejsc));
+
+  useEffect(() => {
+    setImportConfig((pre) => ({ ...pre, url }));
+  }, [url]);
 
   return (
     <>

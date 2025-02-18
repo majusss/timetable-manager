@@ -109,6 +109,7 @@ export function ImportDialog() {
         </DialogContent>
       </Dialog>
       <ImportConfigDialog
+        url={url}
         open={configOpen}
         onOpenChange={setConfigOpen}
         data={importData}
