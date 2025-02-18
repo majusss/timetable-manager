@@ -33,7 +33,7 @@ export function EditBudynekDialog({
           <DialogTitle>Edytuj budynek</DialogTitle>
         </DialogHeader>
         <form
-          action={async (formData: FormData) => {
+          action={async (formData) => {
             await updateBudynek(budynek.id, formData);
             setOpen(false);
           }}

@@ -22,7 +22,7 @@ export function SalaForm({ pietroId }: { pietroId: string }) {
   return (
     <form
       ref={ref}
-      action={async (formData: FormData) => {
+      action={async (formData) => {
         await createSala({
           nazwa: formData.get("nazwa") as string,
           liczbaMiejsc: parseInt(formData.get("liczbaMiejsc") as string),

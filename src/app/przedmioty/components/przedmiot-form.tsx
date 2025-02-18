@@ -23,7 +23,10 @@ export function PrzedmiotForm() {
     <form
       ref={ref}
       action={async (formData) => {
-        await createPrzedmiot(formData);
+        await createPrzedmiot(
+          formData.get("nazwa") as string,
+          +formData.get("waga")! as number,
+        );
         ref.current?.reset();
       }}
       className="space-y-4"

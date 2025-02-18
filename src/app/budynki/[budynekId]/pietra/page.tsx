@@ -34,7 +34,16 @@ export default async function BudynekPietraPage({
           <CardTitle>Dodaj piętro</CardTitle>
         </CardHeader>
         <CardContent>
-          <form action={createPietro} className="space-y-4">
+          <form
+            action={async (formData) => {
+              "use server";
+              await createPietro(
+                +formData.get("numer")! as number,
+                formData.get("budynekId") as string,
+              );
+            }}
+            className="space-y-4"
+          >
             <Input type="hidden" name="budynekId" value={budynek.id} />
             <div>
               <label className="block text-sm font-medium">Numer piętra</label>

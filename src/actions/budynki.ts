@@ -3,8 +3,7 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
-export async function createBudynek(formData: FormData) {
-  const nazwa = formData.get("nazwa") as string;
+export async function createBudynek(nazwa: string) {
   await db.budynek.create({ data: { nazwa } });
   revalidatePath("/budynki");
 }

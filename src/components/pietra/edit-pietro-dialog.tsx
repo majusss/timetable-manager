@@ -33,7 +33,7 @@ export function EditPietroDialog({
           <DialogTitle>Edytuj piętro</DialogTitle>
         </DialogHeader>
         <form
-          action={async (formData: FormData) => {
+          action={async (formData) => {
             await updatePietro(pietro.id, formData);
             setOpen(false);
           }}

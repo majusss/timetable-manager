@@ -3,10 +3,7 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
-export async function createPrzedmiot(formData: FormData) {
-  const nazwa = formData.get("nazwa") as string;
-  const waga = parseInt(formData.get("waga") as string);
-
+export async function createPrzedmiot(nazwa: string, waga: number) {
   await db.przedmiot.create({
     data: { nazwa, waga },
   });

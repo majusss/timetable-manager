@@ -33,7 +33,7 @@ export function EditPrzedmiotDialog({
           <DialogTitle>Edytuj przedmiot</DialogTitle>
         </DialogHeader>
         <form
-          action={async (formData: FormData) => {
+          action={async (formData) => {
             await updatePrzedmiot(przedmiot.id, formData);
             setOpen(false);
           }}

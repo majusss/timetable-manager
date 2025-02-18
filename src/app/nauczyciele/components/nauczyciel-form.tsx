@@ -32,10 +32,11 @@ export function NauczycielForm({ przedmioty }: { przedmioty: Przedmiot[] }) {
     <form
       ref={ref}
       action={async (formData) => {
-        selectedPrzedmioty.forEach((id) => {
-          formData.append("przedmioty", id);
-        });
-        await createNauczyciel(formData);
+        await createNauczyciel(
+          formData.get("nazwa") as string,
+          formData.get("skrot") as string,
+          selectedPrzedmioty,
+        );
         ref.current?.reset();
         setSelectedPrzedmioty([]);
       }}

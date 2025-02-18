@@ -24,7 +24,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 const formSchema = z.object({
-  numer: z.string().min(1, "Numer piętra jest wymagany"),
+  numer: z.number().min(1, "Numer piętra jest wymagany"),
   budynekId: z.string().min(1, "Wybierz budynek"),
 });
 
@@ -40,16 +40,13 @@ export function PietroForm({ budynki }: PietroFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      numer: "",
+      numer: 0,
       budynekId: "",
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const formData = new FormData();
-    formData.append("numer", values.numer);
-    formData.append("budynekId", values.budynekId);
-    await createPietro(formData);
+    await createPietro(values.numer, values.budynekId);
     form.reset();
     router.refresh();
   }

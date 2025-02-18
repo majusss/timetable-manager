@@ -30,9 +30,7 @@ export function BudynekForm() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const formData = new FormData();
-    formData.append("nazwa", values.nazwa);
-    await createBudynek(formData);
+    await createBudynek(values.nazwa);
     form.reset();
     router.refresh();
   }

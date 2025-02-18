@@ -3,11 +3,11 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
-export async function createNauczyciel(formData: FormData) {
-  const nazwa = formData.get("nazwa") as string;
-  const skrot = formData.get("skrot") as string;
-  const przedmiotyIds = formData.getAll("przedmioty") as string[];
-
+export async function createNauczyciel(
+  nazwa: string,
+  skrot: string,
+  przedmiotyIds: string[],
+) {
   await db.nauczyciel.create({
     data: {
       nazwa,

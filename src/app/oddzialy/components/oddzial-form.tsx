@@ -23,7 +23,10 @@ export function OddzialForm() {
     <form
       ref={ref}
       action={async (formData) => {
-        await createOddzial(formData);
+        await createOddzial(
+          formData.get("nazwa") as string,
+          +formData.get("liczbaLekcjiTygodnia")! as number,
+        );
         ref.current?.reset();
       }}
       className="space-y-4"

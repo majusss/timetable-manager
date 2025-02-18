@@ -3,10 +3,7 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
-export async function createPietro(formData: FormData) {
-  const numer = parseInt(formData.get("numer") as string);
-  const budynekId = formData.get("budynekId") as string;
-
+export async function createPietro(numer: number, budynekId: string) {
   await db.pietro.create({
     data: { numer, budynekId },
   });
