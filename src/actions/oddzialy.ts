@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 export async function createOddzial(formData: FormData) {
   const nazwa = formData.get("nazwa") as string;
   const liczbaLekcjiTygodnia = parseInt(
-    formData.get("liczbaLekcjiTygodnia") as string
+    formData.get("liczbaLekcjiTygodnia") as string,
   );
 
   await db.oddzial.create({
@@ -26,7 +26,7 @@ export async function getOddzialy() {
 export async function updateOddzial(id: string, formData: FormData) {
   const nazwa = formData.get("nazwa") as string;
   const liczbaLekcjiTygodnia = parseInt(
-    formData.get("liczbaLekcjiTygodnia") as string
+    formData.get("liczbaLekcjiTygodnia") as string,
   );
 
   await db.oddzial.update({

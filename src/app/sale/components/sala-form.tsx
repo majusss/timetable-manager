@@ -1,7 +1,9 @@
 "use client";
 
+import { createSala } from "@/actions/sale";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -9,13 +11,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState, useRef } from "react";
-import { createSala } from "@/actions/sale";
 import { useToast } from "@/hooks/use-toast";
 import { formatPietroNumer } from "@/lib/utils";
-import { useFormStatus } from "react-dom";
-import { Label } from "@/components/ui/label";
 import { Budynek } from "@/types";
+import { useRef, useState } from "react";
+import { useFormStatus } from "react-dom";
 
 interface SalaFormProps {
   budynki: Budynek[];
@@ -39,11 +39,7 @@ export function SalaForm({ budynki }: SalaFormProps) {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
 
-    if (
-      !form.nazwa.value ||
-      !form.pietroId.value ||
-      !form.liczbaMiejsc.value
-    ) {
+    if (!form.nazwa.value || !form.pietroId.value || !form.liczbaMiejsc.value) {
       toast({
         title: "Błąd",
         description: "Wypełnij wszystkie pola",
@@ -66,7 +62,7 @@ export function SalaForm({ budynki }: SalaFormProps) {
       });
       form.reset();
     } catch (error) {
-      console.error(error);
+      console.log(error);
       toast({
         title: "Błąd",
         description: "Nie udało się dodać sali",

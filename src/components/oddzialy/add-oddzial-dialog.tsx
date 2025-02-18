@@ -42,15 +42,15 @@ export function AddOddzialDialog() {
 
       toast({
         title: "Sukces",
-          description: "Oddział został dodany",
-        });
-        setOpen(false);
-        setFormData({
-          nazwa: "",
-          liczbaLekcjiTygodnia: "0",
+        description: "Oddział został dodany",
+      });
+      setOpen(false);
+      setFormData({
+        nazwa: "",
+        liczbaLekcjiTygodnia: "0",
       });
     } catch (error) {
-      console.error(error);
+      console.log(error);
       toast({
         title: "Błąd",
         description: "Wystąpił błąd podczas dodawania oddziału",

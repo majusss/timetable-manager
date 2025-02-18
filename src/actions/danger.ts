@@ -15,7 +15,7 @@ export async function clearDatabase() {
     revalidatePath("/");
     return { success: true };
   } catch (error) {
-    console.error("Błąd czyszczenia bazy:", error);
+    console.log("Błąd czyszczenia bazy:", error);
     return {
       success: false,
       error: "Nie udało się wyczyścić bazy danych",

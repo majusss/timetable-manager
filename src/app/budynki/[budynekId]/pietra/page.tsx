@@ -5,6 +5,7 @@ import { DeletePietroDialog } from "@/components/pietra/delete-pietro-dialog";
 import { EditPietroDialog } from "@/components/pietra/edit-pietro-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { formatPietroNumer } from "@/lib/utils";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -34,12 +35,13 @@ export default async function BudynekPietraPage({
         </CardHeader>
         <CardContent>
           <form action={createPietro} className="space-y-4">
-            <input type="hidden" name="budynekId" value={budynek.id} />
+            <Input type="hidden" name="budynekId" value={budynek.id} />
             <div>
               <label className="block text-sm font-medium">Numer piętra</label>
-              <input
+              <Input
                 type="number"
                 name="numer"
+                placeholder="Wprowadź numer piętra"
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                 required
               />

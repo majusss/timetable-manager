@@ -5,9 +5,9 @@ import { DeleteSalaDialog } from "@/components/sale/delete-sala-dialog";
 import { EditSalaDialog } from "@/components/sale/edit-sala-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatPietroNumer } from "@/lib/utils";
+import { Sala } from "@/types";
 import { notFound } from "next/navigation";
 import { SalaForm } from "./components/sala-form";
-import { Sala } from "@/types";
 
 interface Props {
   params: Promise<{
@@ -16,7 +16,7 @@ interface Props {
   }>;
 }
 
-  export default async function PietroSalePage({ params }: Props) {
+export default async function PietroSalePage({ params }: Props) {
   const [pietro, budynki] = await Promise.all([
     getPietro((await params).pietroId),
     getBudynki(),

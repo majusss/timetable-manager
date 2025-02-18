@@ -18,11 +18,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
 import { formatPietroNumer } from "@/lib/utils";
 import { Budynek } from "@/types";
 import { useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
-import { useToast } from "@/hooks/use-toast";
 
 function SubmitButton({ isLoading }: { isLoading: boolean }) {
   const { pending } = useFormStatus();
@@ -37,7 +37,7 @@ interface AddSalaDialogProps {
   budynki: Budynek[];
 }
 
-export function AddSalaDialog({ budynki }: AddSalaDialogProps) {  
+export function AddSalaDialog({ budynki }: AddSalaDialogProps) {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [selectedBudynekId, setSelectedBudynekId] = useState("");
@@ -80,9 +80,9 @@ export function AddSalaDialog({ budynki }: AddSalaDialogProps) {
         pietroId: "",
       });
     } catch (error) {
-      console.error(error);
+      console.log(error);
       toast({
-        title: "Błąd", 
+        title: "Błąd",
         description: "Wystąpił błąd podczas dodawania sali",
         variant: "destructive",
       });
@@ -110,7 +110,15 @@ export function AddSalaDialog({ budynki }: AddSalaDialogProps) {
         >
           <div>
             <Label htmlFor="nazwa">Nazwa sali</Label>
-            <Input id="nazwa" name="nazwa" required value={formData.nazwa} onChange={(e) => setFormData({ ...formData, nazwa: e.target.value })} />
+            <Input
+              id="nazwa"
+              name="nazwa"
+              required
+              value={formData.nazwa}
+              onChange={(e) =>
+                setFormData({ ...formData, nazwa: e.target.value })
+              }
+            />
           </div>
           <div>
             <Label htmlFor="liczbaMiejsc">Liczba miejsc</Label>
@@ -122,7 +130,9 @@ export function AddSalaDialog({ budynki }: AddSalaDialogProps) {
               defaultValue="30"
               required
               value={formData.liczbaMiejsc}
-              onChange={(e) => setFormData({ ...formData, liczbaMiejsc: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, liczbaMiejsc: e.target.value })
+              }
             />
           </div>
           <div className="grid gap-2">
@@ -151,7 +161,14 @@ export function AddSalaDialog({ budynki }: AddSalaDialogProps) {
           {selectedBudynekId && (
             <div className="grid gap-2">
               <Label htmlFor="pietro">Piętro</Label>
-              <Select name="pietroId" required value={formData.pietroId} onValueChange={(value) => setFormData({ ...formData, pietroId: value })}>
+              <Select
+                name="pietroId"
+                required
+                value={formData.pietroId}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, pietroId: value })
+                }
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Wybierz piętro" />
                 </SelectTrigger>

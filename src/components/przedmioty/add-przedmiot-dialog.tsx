@@ -43,14 +43,14 @@ export function AddPrzedmiotDialog() {
       toast({
         title: "Sukces",
         description: "Przedmiot został dodany",
-        });
-        setOpen(false);
-        setFormData({
-          nazwa: "",
-          waga: "1",
+      });
+      setOpen(false);
+      setFormData({
+        nazwa: "",
+        waga: "1",
       });
     } catch (error) {
-      console.error(error);
+      console.log(error);
       toast({
         title: "Błąd",
         description: "Wystąpił błąd podczas dodawania przedmiotu",

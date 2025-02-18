@@ -19,10 +19,10 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { formatPietroNumer } from "@/lib/utils";
+import { Budynek } from "@/types";
 import { List } from "@majusss/timetable-parser";
 import { useState } from "react";
 import { ImportProgressDialog } from "./import-progress-dialog";
-import { Budynek } from "@/types";
 
 interface ImportConfigDialogProps {
   open: boolean;

@@ -42,15 +42,15 @@ export function AddNauczycielDialog() {
 
       toast({
         title: "Sukces",
-          description: "Nauczyciel został dodany",
-        });
-        setOpen(false);
-        setFormData({
-          nazwa: "",
-          skrot: "",
+        description: "Nauczyciel został dodany",
+      });
+      setOpen(false);
+      setFormData({
+        nazwa: "",
+        skrot: "",
       });
     } catch (error) {
-      console.error(error);
+      console.log(error);
       toast({
         title: "Błąd",
         description: "Wystąpił błąd podczas dodawania nauczyciela",

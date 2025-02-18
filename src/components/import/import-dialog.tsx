@@ -13,10 +13,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { Budynek } from "@/types";
 import { List } from "@majusss/timetable-parser";
 import { useEffect, useState } from "react";
 import { ImportConfigDialog } from "./import-config-dialog";
-import { Budynek } from "@/types";
 
 export function ImportDialog() {
   const [open, setOpen] = useState(false);
@@ -56,7 +56,7 @@ export function ImportDialog() {
         });
       }
     } catch (err) {
-      console.error(err);
+      console.log(err);
       toast({
         title: "Błąd",
         description: "Wystąpił nieoczekiwany błąd podczas importu",

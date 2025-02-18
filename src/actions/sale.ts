@@ -44,7 +44,7 @@ export async function updateSala(
     nazwa: string;
     liczbaMiejsc: number;
     pietroId: string;
-  }
+  },
 ) {
   const sala = await db.sala.findUnique({
     where: { id },
@@ -71,5 +71,7 @@ export async function deleteSala(id: string) {
 
   await db.sala.delete({ where: { id } });
 
-  revalidatePath(`/budynki/${sala?.pietro.budynekId}/pietra/${sala?.pietroId}/sale`);
+  revalidatePath(
+    `/budynki/${sala?.pietro.budynekId}/pietra/${sala?.pietroId}/sale`,
+  );
 }

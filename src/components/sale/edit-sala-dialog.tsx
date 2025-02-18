@@ -63,7 +63,7 @@ export function EditSalaDialog({ sala, budynki }: EditSalaDialogProps) {
       });
       setOpen(false);
     } catch (error) {
-      console.error(error);
+      console.log(error);
       toast({
         title: "Błąd",
         description: "Wystąpił błąd podczas aktualizacji sali",

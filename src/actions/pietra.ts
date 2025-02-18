@@ -36,12 +36,12 @@ export async function getPietro(id: string) {
         include: {
           pietro: {
             include: {
-              budynek: true
-            }
-          }
-        }
-      }
-    }
+              budynek: true,
+            },
+          },
+        },
+      },
+    },
   });
 }
 

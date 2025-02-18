@@ -38,7 +38,7 @@ export function DangerZone() {
         });
       }
     } catch (err) {
-      console.error(err);
+      console.log(err);
       toast({
         title: "Błąd",
         description: "Wystąpił nieoczekiwany błąd",

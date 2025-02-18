@@ -20,7 +20,7 @@ export interface Pietro {
   id: string;
   numer: number;
   budynekId: string;
-  budynek: Omit<Budynek, 'pietra'>;
+  budynek: Omit<Budynek, "pietra">;
   sale: Sala[];
   createdAt: Date;
   updatedAt: Date;

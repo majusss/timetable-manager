@@ -22,14 +22,12 @@ export async function getDataToImport(url: string) {
     }
 
     const listHtml = await listResponse.text();
-
     const timetableList = new TimetableList(listHtml);
-
     const list = timetableList.getList();
 
     return { success: true, message: `Rozpoczęto import "${title}"`, list };
   } catch (error) {
-    console.error("Błąd importu:", error);
+    console.log("Błąd importu:", error);
     return {
       success: false,
       message: error instanceof Error ? error.message : "Nieznany błąd importu",
@@ -56,7 +54,7 @@ export async function addOddzial(name: string) {
 
     return { success: true };
   } catch (error) {
-    console.error("Błąd dodawania oddziału:", error);
+    console.log("Błąd dodawania oddziału:", error);
     return {
       success: false,
       error:
@@ -80,7 +78,7 @@ export async function addSala(
     revalidatePath("/");
     return { success: true };
   } catch (error) {
-    console.error("Błąd dodawania sali:", error);
+    console.log("Błąd dodawania sali:", error);
     return {
       success: false,
       error:
@@ -103,7 +101,7 @@ export async function addNauczyciel(nauczyciel: {
     revalidatePath("/");
     return { success: true };
   } catch (error) {
-    console.error("Błąd dodawania nauczyciela:", error);
+    console.log("Błąd dodawania nauczyciela:", error);
     return {
       success: false,
       error:
