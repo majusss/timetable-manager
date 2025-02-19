@@ -13,15 +13,16 @@ export async function clearDatabase() {
     await db.przedmiot.deleteMany();
 
     revalidatePath("/");
-    revalidatePath("/budynki");
-    revalidatePath("/sale");
-    revalidatePath("/nauczyciele");
-    revalidatePath("/oddzialy");
-    revalidatePath("/przedmioty");
+    revalidatePath("/dane");
+    revalidatePath("/dane/budynki");
+    revalidatePath("/dane/sale");
+    revalidatePath("/dane/nauczyciele");
+    revalidatePath("/dane/oddzialy");
+    revalidatePath("/dane/przedmioty");
 
     return { success: true };
   } catch (error) {
-    console.log("Błąd czyszczenia bazy:", error);
+    console.error("Błąd czyszczenia bazy:", error);
     return {
       success: false,
       error: "Nie udało się wyczyścić bazy danych",

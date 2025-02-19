@@ -18,7 +18,7 @@ export async function createNauczyciel(
     },
   });
 
-  revalidatePath("/nauczyciele");
+  revalidatePath("/dane/nauczyciele");
 }
 
 export async function getNauczyciele() {
@@ -43,10 +43,10 @@ export async function updateNauczyciel(id: string, formData: FormData) {
     },
   });
 
-  revalidatePath("/nauczyciele");
+  revalidatePath("/dane/nauczyciele");
 }
 
 export async function deleteNauczyciel(id: string) {
   await db.nauczyciel.delete({ where: { id } });
-  revalidatePath("/nauczyciele");
+  revalidatePath("/dane/nauczyciele");
 }

@@ -14,7 +14,7 @@ export async function createOddzial(
     },
   });
 
-  revalidatePath("/oddzialy");
+  revalidatePath("/dane/oddzialy");
 }
 
 export async function getOddzialy() {
@@ -32,10 +32,10 @@ export async function updateOddzial(id: string, formData: FormData) {
     data: { nazwa, liczbaLekcjiTygodnia },
   });
 
-  revalidatePath("/oddzialy");
+  revalidatePath("/dane/oddzialy");
 }
 
 export async function deleteOddzial(id: string) {
   await db.oddzial.delete({ where: { id } });
-  revalidatePath("/oddzialy");
+  revalidatePath("/dane/oddzialy");
 }

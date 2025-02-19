@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 
 export async function createBudynek(nazwa: string) {
   await db.budynek.create({ data: { nazwa } });
-  revalidatePath("/budynki");
+  revalidatePath("/dane/budynki");
 }
 
 export async function getBudynki() {
@@ -40,10 +40,10 @@ export async function updateBudynek(id: string, formData: FormData) {
     where: { id },
     data: { nazwa },
   });
-  revalidatePath("/budynki");
+  revalidatePath("/dane/budynki");
 }
 
 export async function deleteBudynek(id: string) {
   await db.budynek.delete({ where: { id } });
-  revalidatePath("/budynki");
+  revalidatePath("/dane/budynki");
 }

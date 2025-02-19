@@ -8,7 +8,7 @@ export async function createPrzedmiot(nazwa: string, waga: number) {
     data: { nazwa, waga },
   });
 
-  revalidatePath("/przedmioty");
+  revalidatePath("/dane/przedmioty");
 }
 
 export async function getPrzedmioty() {
@@ -26,10 +26,10 @@ export async function updatePrzedmiot(id: string, formData: FormData) {
     data: { nazwa, waga },
   });
 
-  revalidatePath("/przedmioty");
+  revalidatePath("/dane/przedmioty");
 }
 
 export async function deletePrzedmiot(id: string) {
   await db.przedmiot.delete({ where: { id } });
-  revalidatePath("/przedmioty");
+  revalidatePath("/dane/przedmioty");
 }
