@@ -48,11 +48,14 @@ export function ImportConfigDialog({
     oddzialy: true,
     sale: !!data.rooms?.length,
     nauczyciele: !!data.teachers?.length,
+    przedmioty: true,
   });
   const [defaultConfig, setDefaultConfig] = useState({
     liczbaMiejsc: "30",
     budynekId: "",
     pietroId: "",
+    skrotLength: "2",
+    przedmiotyWaga: "1",
   });
   const [showProgress, setShowProgress] = useState(false);
   const { toast } = useToast();
@@ -78,11 +81,14 @@ export function ImportConfigDialog({
       oddzialy: true,
       sale: !!data.rooms?.length,
       nauczyciele: !!data.teachers?.length,
+      przedmioty: !!data.teachers?.length,
     });
     setDefaultConfig({
       liczbaMiejsc: "30",
       budynekId: "",
       pietroId: "",
+      skrotLength: "2",
+      przedmiotyWaga: "1",
     });
   };
 
@@ -150,7 +156,7 @@ export function ImportConfigDialog({
 
           const result = await addOddzial(
             branch.name,
-            `${importConfig.url}/plany/o${branch.value}.html`,
+            // `${importConfig.url}/plany/o${branch.value}.html`,
           );
 
           if (!result.success) {
@@ -199,6 +205,10 @@ export function ImportConfigDialog({
           const result = await addNauczyciel(
             teacher.name,
             `${importConfig.url}/plany/n${teacher.value}.html`,
+            {
+              skrotLength: parseInt(defaultConfig.skrotLength),
+              przedmiotyWaga: parseInt(defaultConfig.przedmiotyWaga),
+            },
           );
 
           if (!result.success) {
@@ -235,7 +245,7 @@ export function ImportConfigDialog({
       }
 
       setTimeout(() => {
-        setShowProgress(false);
+        if (!hasErrors) setShowProgress(false);
         handleImportComplete();
       }, 1500);
     } catch (error) {
@@ -403,7 +413,7 @@ export function ImportConfigDialog({
                         <SelectContent>
                           {buildings
                             .find((b) => b.id === defaultConfig.budynekId)
-                            ?.pietra.map((pietro) => (
+                            ?.pietra?.map((pietro) => (
                               <SelectItem key={pietro.id} value={pietro.id}>
                                 {formatPietroNumer(pietro.numer)}
                               </SelectItem>
@@ -415,6 +425,72 @@ export function ImportConfigDialog({
                 </div>
               </div>
             )}
+
+            {importConfig.nauczyciele && data.teachers?.length && (
+              <div className="space-y-4">
+                <h3 className="font-medium">Konfiguracja nauczycieli</h3>
+                <div className="grid gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="skrotLength">Długość skrótu nazwiska</Label>
+                    <Input
+                      id="skrotLength"
+                      type="number"
+                      min="1"
+                      max="10"
+                      value={defaultConfig.skrotLength}
+                      onChange={(e) =>
+                        setDefaultConfig((prev) => ({
+                          ...prev,
+                          skrotLength: e.target.value,
+                        }))
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="przedmioty"
+                  checked={importConfig.przedmioty}
+                  onCheckedChange={(checked) =>
+                    setImportConfig((prev) => ({
+                      ...prev,
+                      przedmioty: !!checked,
+                    }))
+                  }
+                />
+                <Label htmlFor="przedmioty" className="flex items-center gap-2">
+                  Przedmioty
+                  <span className="text-sm text-muted-foreground">
+                    (automatycznie z planu)
+                  </span>
+                </Label>
+              </div>
+
+              {importConfig.przedmioty && (
+                <div className="grid gap-2 pl-6">
+                  <Label htmlFor="przedmiotyWaga">
+                    Domyślna waga przedmiotów
+                  </Label>
+                  <Input
+                    id="przedmiotyWaga"
+                    type="number"
+                    min="1"
+                    max="10"
+                    value={defaultConfig.przedmiotyWaga}
+                    onChange={(e) =>
+                      setDefaultConfig((prev) => ({
+                        ...prev,
+                        przedmiotyWaga: e.target.value,
+                      }))
+                    }
+                  />
+                </div>
+              )}
+            </div>
 
             <div className="flex justify-end gap-3">
               <Button

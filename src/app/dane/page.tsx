@@ -100,10 +100,10 @@ export default async function DanePage() {
             <div className="text-2xl font-bold">{oddzialy.length}</div>
             <p className="text-xs text-muted-foreground">
               Łączna liczba lekcji:{" "}
-              {oddzialy.reduce(
-                (sum, oddzial) => sum + oddzial.liczbaLekcjiTygodnia,
+              {/* {oddzialy.reduce(
+                (sum, oddzial) => sum + oddzial.przedmiotyOddział.length,
                 0,
-              )}
+              )} */}
             </p>
           </CardContent>
         </Card>

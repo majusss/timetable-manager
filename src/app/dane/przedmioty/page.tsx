@@ -1,13 +1,14 @@
-import { getPrzedmioty } from "@/actions/przedmioty";
 import { BackButton } from "@/components/dane/back-button";
 import { DeletePrzedmiotDialog } from "@/components/dane/przedmioty/delete-przedmiot-dialog";
 import { EditPrzedmiotDialog } from "@/components/dane/przedmioty/edit-przedmiot-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { db } from "@/lib/db";
 import { headers } from "next/headers";
 import { PrzedmiotForm } from "./components/przedmiot-form";
+import { PrzedmiotGodziny } from "./components/przedmiot-godziny";
 
 export default async function PrzedmiotyPage() {
-  const przedmioty = await getPrzedmioty();
+  const przedmioty = await db.przedmiot.findMany();
   const headersList = await headers();
   const referer = headersList.get("referer") || "";
   const isFromNauczyciele = referer.includes("/nauczyciele");
@@ -48,6 +49,7 @@ export default async function PrzedmiotyPage() {
                 <div className="text-sm text-muted-foreground">
                   Waga: {przedmiot.waga}
                 </div>
+                <PrzedmiotGodziny przedmiotId={przedmiot.id} />
               </div>
               <div className="flex items-center gap-2">
                 <EditPrzedmiotDialog przedmiot={przedmiot} />

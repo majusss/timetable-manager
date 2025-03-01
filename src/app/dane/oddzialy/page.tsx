@@ -37,7 +37,8 @@ export default async function OddzialyPage() {
               <div className="space-y-1">
                 <div className="font-medium">{oddzial.nazwa}</div>
                 <div className="text-sm text-muted-foreground">
-                  Liczba lekcji w tygodniu: {oddzial.liczbaLekcjiTygodnia}
+                  {/* TODO: FANCY DISPLAY STATS */}
+                  {/* Liczba lekcji w tygodniu: {oddzial.liczbaLekcjiTygodnia} */}
                 </div>
               </div>
               <div className="flex items-center gap-2">

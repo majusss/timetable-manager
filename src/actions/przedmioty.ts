@@ -33,3 +33,14 @@ export async function deletePrzedmiot(id: string) {
   await db.przedmiot.delete({ where: { id } });
   revalidatePath("/dane/przedmioty");
 }
+
+export async function getPrzedmiotGodziny(przedmiotId: string) {
+  const godziny = await db.przedmiotOddzial.findMany({
+    where: { przedmiotId },
+    include: {
+      oddzial: { select: { nazwa: true } },
+    },
+  });
+
+  return godziny;
+}

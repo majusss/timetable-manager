@@ -34,8 +34,8 @@ export function EditSalaDialog({ sala, budynki }: EditSalaDialogProps) {
   const [formData, setFormData] = useState({
     nazwa: sala.nazwa,
     liczbaMiejsc: sala.liczbaMiejsc.toString(),
-    budynekId: sala.pietro.budynek.id,
-    pietroId: sala.pietro.id,
+    budynekId: sala.pietro?.budynek?.id || "",
+    pietroId: sala.pietro?.id || "",
   });
   const { toast } = useToast();
 
@@ -150,7 +150,7 @@ export function EditSalaDialog({ sala, budynki }: EditSalaDialogProps) {
                 <SelectContent>
                   {budynki
                     .find((b) => b.id === formData.budynekId)
-                    ?.pietra.map((pietro) => (
+                    ?.pietra?.map((pietro) => (
                       <SelectItem key={pietro.id} value={pietro.id}>
                         {formatPietroNumer(pietro.numer)}
                       </SelectItem>

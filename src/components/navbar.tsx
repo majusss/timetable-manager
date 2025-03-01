@@ -20,6 +20,9 @@ const firstMenuContent = (
     <DropdownMenuItem asChild>
       <BreadcrumbLink href="/dane">Dane</BreadcrumbLink>
     </DropdownMenuItem>
+    <DropdownMenuItem asChild>
+      <BreadcrumbLink href="/generuj">Generuj</BreadcrumbLink>
+    </DropdownMenuItem>
   </DropdownMenuContent>
 );
 

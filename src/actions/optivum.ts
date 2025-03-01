@@ -1,7 +1,12 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { Table, Timetable, TimetableList } from "@majusss/timetable-parser";
+import {
+  Table,
+  TableLesson,
+  Timetable,
+  TimetableList,
+} from "@majusss/timetable-parser";
 import { revalidatePath } from "next/cache";
 
 export async function getDataToImport(url: string) {
@@ -44,42 +49,40 @@ export async function getDataToImport(url: string) {
   }
 }
 
-async function getLiczbaLekcjiTygodnia(url: string) {
-  const fetchUrl = new URL(url);
-  const response = await fetch(fetchUrl.href, {
-    redirect: "follow",
-  });
-  if (!response.ok) {
-    throw new Error("Nie udało się pobrać planu lekcji");
-  }
-  const html = await response.text();
-
-  const table = new Table(html);
-  const hours = await table.getDays();
-
-  const firstGroupName = hours
+async function getMostUsedGroupName(hours: TableLesson[][][]) {
+  const groupNames = hours
     .flat()
-    .find((lesson) => lesson.length > 1)?.[0].groupName;
-  const lessons = hours.flat().filter((lesson) => {
-    const isLessonEmpty = lesson.length === 0;
-    if (isLessonEmpty) return false;
+    .flat()
+    .filter(
+      (lesson): lesson is TableLesson =>
+        lesson !== undefined && lesson !== null,
+    )
+    .map((lesson) => lesson.groupName)
+    .filter((name): name is string => name !== undefined && name !== null);
 
-    const isGrupSlited = "groupName" in lesson[0];
-    const isLessonForFirstGroup = lesson[0]?.groupName == firstGroupName;
+  if (groupNames.length === 0) {
+    return "";
+  }
 
-    if (!isGrupSlited) return true;
-    if (isGrupSlited && isLessonForFirstGroup) return true;
-  });
+  const groupNameCounts = groupNames.reduce(
+    (acc, name) => {
+      acc[name] = (acc[name] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
-  return lessons.length;
+  const sortedGroups = Object.entries(groupNameCounts).sort(
+    (a, b) => b[1] - a[1],
+  );
+  return sortedGroups.length > 0 ? sortedGroups[0][0] : "";
 }
 
-export async function addOddzial(name: string, url: string) {
+export async function addOddzial(name: string) {
   try {
     await db.oddzial.create({
       data: {
         nazwa: name,
-        liczbaLekcjiTygodnia: await getLiczbaLekcjiTygodnia(url),
       },
     });
 
@@ -127,17 +130,20 @@ export async function addSala(
   }
 }
 
-async function getPrzedmioty(url: string): Promise<
-  {
-    where: {
-      nazwa: string;
-    };
-    create: {
-      nazwa: string;
-      waga: number;
-    };
-  }[]
-> {
+async function getPrzedmioty(
+  url: string,
+  defaultWaga: number,
+): Promise<{
+  przedmioty: {
+    where: { nazwa: string };
+    create: { nazwa: string; waga: number };
+  }[];
+  przedmiotyGodziny: {
+    przedmiot: string;
+    className: string;
+    godzTygodnia: number;
+  }[];
+}> {
   const fetchUrl = new URL(url);
   const response = await fetch(fetchUrl.href, {
     redirect: "follow",
@@ -150,38 +156,102 @@ async function getPrzedmioty(url: string): Promise<
   const table = new Table(html);
   const hours = await table.getDays();
 
-  const przedmioty = new Set<string>(
-    hours.flat(2).map((lesson) => lesson.subject),
-  );
+  const primaryGroupName = await getMostUsedGroupName(hours);
 
-  const przedmiotyArray = Array.from(przedmioty);
+  const przedmiotyCount: Record<string, Record<string, number>> = {};
 
-  const przedmiotyWithWaga = przedmiotyArray.map((przedmiot) => {
-    return {
-      nazwa: przedmiot,
-      waga: 1,
-    };
+  hours.flat().forEach((lessons) => {
+    if (!lessons || lessons.length === 0) return;
+
+    const lesson = lessons[0];
+    if (!lesson) return;
+
+    const isGrupSlited = lesson.groupName !== undefined;
+    const isLessonForFirstGroup =
+      !isGrupSlited || lesson.groupName === primaryGroupName;
+
+    if (isLessonForFirstGroup && lesson.subject && lesson.className) {
+      if (!przedmiotyCount[lesson.subject]) {
+        przedmiotyCount[lesson.subject] = {};
+      }
+      przedmiotyCount[lesson.subject][lesson.className] =
+        (przedmiotyCount[lesson.subject][lesson.className] || 0) + 1;
+    }
   });
 
-  return przedmiotyWithWaga.map((przedmiot) => ({
-    where: {
-      nazwa: przedmiot.nazwa,
-    },
-    create: przedmiot,
+  const przedmioty = Object.keys(przedmiotyCount).map((nazwa) => ({
+    where: { nazwa },
+    create: { nazwa, waga: defaultWaga },
   }));
+
+  const przedmiotyGodziny = Object.entries(przedmiotyCount).flatMap(
+    ([przedmiot, classes]) =>
+      Object.entries(classes).map(([className, godziny]) => ({
+        przedmiot,
+        className,
+        godzTygodnia: godziny,
+      })),
+  );
+
+  return { przedmioty, przedmiotyGodziny };
 }
 
-export async function addNauczyciel(name: string, url: string) {
+export async function addNauczyciel(
+  name: string,
+  url: string,
+  config: {
+    skrotLength: number;
+    przedmiotyWaga: number;
+  },
+) {
   try {
-    await db.nauczyciel.create({
+    const { przedmioty, przedmiotyGodziny } = await getPrzedmioty(
+      url,
+      config.przedmiotyWaga,
+    );
+
+    const nauczyciel = await db.nauczyciel.create({
       data: {
         nazwa: name,
-        skrot: name.slice(0, 3),
+        skrot: name.slice(0, config.skrotLength),
         przedmioty: {
-          connectOrCreate: await getPrzedmioty(url),
+          connectOrCreate: przedmioty,
         },
       },
+      include: {
+        przedmioty: true,
+      },
     });
+
+    for (const { przedmiot, className, godzTygodnia } of przedmiotyGodziny) {
+      const dbPrzedmiot = nauczyciel.przedmioty.find(
+        (p) => p.nazwa === przedmiot,
+      );
+      if (dbPrzedmiot) {
+        const oddzial = await db.oddzial.findFirst({
+          where: { nazwa: className },
+        });
+
+        if (oddzial) {
+          await db.przedmiotOddzial.upsert({
+            where: {
+              przedmiotId_oddzialId: {
+                przedmiotId: dbPrzedmiot.id,
+                oddzialId: oddzial.id,
+              },
+            },
+            create: {
+              przedmiotId: dbPrzedmiot.id,
+              oddzialId: oddzial.id,
+              godzTygodnia,
+            },
+            update: {
+              godzTygodnia,
+            },
+          });
+        }
+      }
+    }
 
     revalidatePath("/dane/");
     revalidatePath("/dane/nauczyciele");

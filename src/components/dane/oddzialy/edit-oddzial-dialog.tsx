@@ -17,7 +17,7 @@ import { useState } from "react";
 export function EditOddzialDialog({
   oddzial,
 }: {
-  oddzial: { id: string; nazwa: string; liczbaLekcjiTygodnia: number };
+  oddzial: { id: string; nazwa: string };
 }) {
   const [open, setOpen] = useState(false);
 
@@ -45,18 +45,6 @@ export function EditOddzialDialog({
               id="nazwa"
               name="nazwa"
               defaultValue={oddzial.nazwa}
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="liczbaLekcjiTygodnia">
-              Liczba lekcji w tygodniu
-            </Label>
-            <Input
-              id="liczbaLekcjiTygodnia"
-              name="liczbaLekcjiTygodnia"
-              type="number"
-              defaultValue={oddzial.liczbaLekcjiTygodnia}
               required
             />
           </div>

@@ -3,14 +3,10 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
-export async function createOddzial(
-  nazwa: string,
-  liczbaLekcjiTygodnia: number,
-) {
+export async function createOddzial(nazwa: string) {
   await db.oddzial.create({
     data: {
       nazwa,
-      liczbaLekcjiTygodnia,
     },
   });
 
@@ -23,13 +19,10 @@ export async function getOddzialy() {
 
 export async function updateOddzial(id: string, formData: FormData) {
   const nazwa = formData.get("nazwa") as string;
-  const liczbaLekcjiTygodnia = parseInt(
-    formData.get("liczbaLekcjiTygodnia") as string,
-  );
 
   await db.oddzial.update({
     where: { id },
-    data: { nazwa, liczbaLekcjiTygodnia },
+    data: { nazwa },
   });
 
   revalidatePath("/dane/oddzialy");

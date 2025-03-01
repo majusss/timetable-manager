@@ -34,6 +34,23 @@ export default async function HomePage() {
             </p>
           </CardContent>
         </Card>
+        {/* Dane */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Plan lekcji</CardTitle>
+            <Link href="/generuj">
+              <Button variant="outline" size="sm">
+                Zarządzaj
+              </Button>
+            </Link>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">Generuj</div>
+            <p className="text-xs text-muted-foreground">
+              Generowanie planu lekcji
+            </p>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

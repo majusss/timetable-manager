@@ -23,10 +23,7 @@ export function OddzialForm() {
     <form
       ref={ref}
       action={async (formData) => {
-        await createOddzial(
-          formData.get("nazwa") as string,
-          +formData.get("liczbaLekcjiTygodnia")! as number,
-        );
+        await createOddzial(formData.get("nazwa") as string);
         ref.current?.reset();
       }}
       className="space-y-4"
@@ -34,15 +31,6 @@ export function OddzialForm() {
       <div>
         <Label htmlFor="nazwa">Nazwa oddziału</Label>
         <Input id="nazwa" name="nazwa" required />
-      </div>
-      <div>
-        <Label htmlFor="liczbaLekcjiTygodnia">Liczba lekcji w tygodniu</Label>
-        <Input
-          id="liczbaLekcjiTygodnia"
-          name="liczbaLekcjiTygodnia"
-          type="number"
-          required
-        />
       </div>
       <SubmitButton />
     </form>

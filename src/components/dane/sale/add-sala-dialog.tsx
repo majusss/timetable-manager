@@ -175,7 +175,7 @@ export function AddSalaDialog({ budynki }: AddSalaDialogProps) {
                 <SelectContent>
                   {budynki
                     .find((b) => b.id === selectedBudynekId)
-                    ?.pietra.map((pietro) => (
+                    ?.pietra?.map((pietro) => (
                       <SelectItem key={pietro.id} value={pietro.id}>
                         {formatPietroNumer(pietro.numer)}
                       </SelectItem>
