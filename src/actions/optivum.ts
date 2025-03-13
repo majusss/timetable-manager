@@ -102,21 +102,45 @@ export async function addOddzial(name: string) {
 
 export async function addSala(
   name: string,
-  config: { liczbaMiejsc: string; pietroId: string },
+  config: {
+    liczbaMiejsc: string;
+    pietroId: string;
+    typSalaPrzedmiotId: string;
+  },
 ) {
   try {
+    // Sprawdź czy piętro istnieje
+    const pietro = await db.pietro.findUnique({
+      where: { id: config.pietroId },
+      select: { budynekId: true },
+    });
+
+    if (!pietro) {
+      throw new Error("Wybrane piętro nie istnieje");
+    }
+
+    // Znajdź lub użyj domyślnego typu sali
+    const finalTypId =
+      config.typSalaPrzedmiotId ||
+      (
+        await db.typSalaPrzedmiot.findFirstOrThrow({
+          where: { nazwa: "Ogólny" },
+        })
+      ).id;
+
     await db.sala.create({
       data: {
         nazwa: name,
         liczbaMiejsc: parseInt(config.liczbaMiejsc),
         pietroId: config.pietroId,
+        typSalaPrzedmiotId: finalTypId,
       },
     });
 
     revalidatePath("/dane/");
     revalidatePath("/dane/sale");
     revalidatePath(
-      `/budynki/${config.pietroId}/pietra/${config.pietroId}/sale`,
+      `/budynki/${pietro.budynekId}/pietra/${config.pietroId}/sale`,
     );
 
     return { success: true };
@@ -202,6 +226,7 @@ export async function addNauczyciel(
   config: {
     skrotLength: number;
     przedmiotyWaga: number;
+    typSalaPrzedmiotId: string;
   },
 ) {
   try {
@@ -215,7 +240,17 @@ export async function addNauczyciel(
         nazwa: name,
         skrot: name.slice(0, config.skrotLength),
         przedmioty: {
-          connectOrCreate: przedmioty,
+          connectOrCreate: przedmioty.map((p) => ({
+            where: p.where,
+            create: {
+              ...p.create,
+              typSalaPrzedmiot: {
+                connect: {
+                  id: config.typSalaPrzedmiotId,
+                },
+              },
+            },
+          })),
         },
       },
       include: {

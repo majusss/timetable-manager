@@ -1,6 +1,7 @@
 "use client";
 
 import { updateSala } from "@/actions/sale";
+import { getTypySal } from "@/actions/typySal";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -21,7 +22,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { formatPietroNumer } from "@/lib/utils";
 import { Budynek, Sala } from "@/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface EditSalaDialogProps {
   sala: Sala;
@@ -31,13 +32,19 @@ interface EditSalaDialogProps {
 export function EditSalaDialog({ sala, budynki }: EditSalaDialogProps) {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [typySal, setTypySal] = useState<{ id: string; nazwa: string }[]>([]);
   const [formData, setFormData] = useState({
     nazwa: sala.nazwa,
     liczbaMiejsc: sala.liczbaMiejsc.toString(),
     budynekId: sala.pietro?.budynek?.id || "",
     pietroId: sala.pietro?.id || "",
+    typSalaPrzedmiotId: sala.typSalaPrzedmiot?.id || "",
   });
   const { toast } = useToast();
+
+  useEffect(() => {
+    getTypySal().then(setTypySal);
+  }, []);
 
   const handleSubmit = async () => {
     if (!formData.nazwa || !formData.pietroId || !formData.liczbaMiejsc) {
@@ -55,6 +62,7 @@ export function EditSalaDialog({ sala, budynki }: EditSalaDialogProps) {
         nazwa: formData.nazwa,
         liczbaMiejsc: parseInt(formData.liczbaMiejsc),
         pietroId: formData.pietroId,
+        typSalaPrzedmiotId: formData.typSalaPrzedmiotId,
       });
 
       toast({
@@ -110,6 +118,28 @@ export function EditSalaDialog({ sala, budynki }: EditSalaDialogProps) {
                 }))
               }
             />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="typ">Typ sali</Label>
+            <Select
+              value={formData.typSalaPrzedmiotId}
+              onValueChange={(value) =>
+                setFormData((prev) => ({ ...prev, typSalaPrzedmiotId: value }))
+              }
+            >
+              <SelectTrigger>
+                <SelectValue
+                  placeholder={sala.typSalaPrzedmiot?.nazwa || "Ogólny"}
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {typySal.map((typ) => (
+                  <SelectItem key={typ.id} value={typ.id}>
+                    {typ.nazwa}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="grid gap-2">
             <Label htmlFor="budynek">Budynek</Label>

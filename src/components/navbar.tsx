@@ -35,6 +35,9 @@ const secondMenuContent = (
       <BreadcrumbLink href="/dane/sale">Sale</BreadcrumbLink>
     </DropdownMenuItem>
     <DropdownMenuItem asChild>
+      <BreadcrumbLink href="/dane/typy-sal">Typy Sal</BreadcrumbLink>
+    </DropdownMenuItem>
+    <DropdownMenuItem asChild>
       <BreadcrumbLink href="/dane/nauczyciele">Nauczyciele</BreadcrumbLink>
     </DropdownMenuItem>
     <DropdownMenuItem asChild>

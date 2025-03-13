@@ -7,16 +7,27 @@ export async function createSala({
   nazwa,
   liczbaMiejsc,
   pietroId,
+  typSalaPrzedmiotId,
 }: {
   nazwa: string;
   liczbaMiejsc: number;
   pietroId: string;
+  typSalaPrzedmiotId?: string;
 }) {
+  const finalTypId =
+    typSalaPrzedmiotId ||
+    (
+      await db.typSalaPrzedmiot.findFirstOrThrow({
+        where: { nazwa: "Ogólny" },
+      })
+    ).id;
+
   await db.sala.create({
     data: {
       nazwa,
       liczbaMiejsc,
       pietroId,
+      typSalaPrzedmiotId: finalTypId,
     },
   });
 
@@ -30,7 +41,10 @@ export async function createSala({
 
 export async function getSale() {
   return await db.sala.findMany({
-    include: { pietro: { include: { budynek: true } } },
+    include: {
+      pietro: { include: { budynek: true } },
+      typSalaPrzedmiot: true,
+    },
   });
 }
 
@@ -40,10 +54,12 @@ export async function updateSala(
     nazwa,
     liczbaMiejsc,
     pietroId,
+    typSalaPrzedmiotId,
   }: {
     nazwa: string;
     liczbaMiejsc: number;
     pietroId: string;
+    typSalaPrzedmiotId?: string;
   },
 ) {
   const sala = await db.sala.findUnique({
@@ -51,12 +67,21 @@ export async function updateSala(
     select: { pietro: { select: { budynekId: true } } },
   });
 
+  const finalTypId =
+    typSalaPrzedmiotId ||
+    (
+      await db.typSalaPrzedmiot.findFirstOrThrow({
+        where: { nazwa: "Ogólny" },
+      })
+    ).id;
+
   await db.sala.update({
     where: { id },
     data: {
       nazwa,
       liczbaMiejsc,
       pietroId,
+      typSalaPrzedmiotId: finalTypId,
     },
   });
 

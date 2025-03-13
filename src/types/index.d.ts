@@ -21,7 +21,16 @@ export interface Sala {
   nazwa: string;
   liczbaMiejsc: number;
   pietroId: string;
+  typSalaPrzedmiotId?: string;
   pietro?: Pietro;
+  typSalaPrzedmiot?: TypSalaPrzedmiot;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface TypSalaPrzedmiot {
+  id: string;
+  nazwa: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { addNauczyciel, addOddzial, addSala } from "@/actions/optivum";
+import { getTypySal } from "@/actions/typySal";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -54,11 +55,13 @@ export function ImportConfigDialog({
     liczbaMiejsc: "30",
     budynekId: "",
     pietroId: "",
+    typSalaPrzedmiotId: "",
     skrotLength: "2",
     przedmiotyWaga: "1",
   });
   const [showProgress, setShowProgress] = useState(false);
   const { toast } = useToast();
+  const [typySal, setTypySal] = useState<{ id: string; nazwa: string }[]>([]);
 
   const [progress, setProgress] = useState<{
     current: number;
@@ -87,6 +90,7 @@ export function ImportConfigDialog({
       liczbaMiejsc: "30",
       budynekId: "",
       pietroId: "",
+      typSalaPrzedmiotId: "",
       skrotLength: "2",
       przedmiotyWaga: "1",
     });
@@ -182,6 +186,7 @@ export function ImportConfigDialog({
           const result = await addSala(room.name, {
             liczbaMiejsc: defaultConfig.liczbaMiejsc,
             pietroId: defaultConfig.pietroId,
+            typSalaPrzedmiotId: defaultConfig.typSalaPrzedmiotId,
           });
 
           if (!result.success) {
@@ -208,6 +213,7 @@ export function ImportConfigDialog({
             {
               skrotLength: parseInt(defaultConfig.skrotLength),
               przedmiotyWaga: parseInt(defaultConfig.przedmiotyWaga),
+              typSalaPrzedmiotId: defaultConfig.typSalaPrzedmiotId,
             },
           );
 
@@ -274,6 +280,10 @@ export function ImportConfigDialog({
     setImportConfig((pre) => ({ ...pre, url }));
   }, [url]);
 
+  useEffect(() => {
+    getTypySal().then(setTypySal);
+  }, []);
+
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -282,8 +292,8 @@ export function ImportConfigDialog({
             <DialogTitle>Konfiguracja importu</DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-6">
-            <div className="space-y-4">
+          <div className="space-y-8">
+            <div className="space-y-4 rounded-lg border p-4">
               <h3 className="font-medium">Co chcesz zaimportować?</h3>
               <div className="grid gap-4">
                 <div className="flex items-center space-x-2">
@@ -349,8 +359,38 @@ export function ImportConfigDialog({
               </div>
             </div>
 
+            <div className="space-y-4 rounded-lg border p-4">
+              <h3 className="font-medium">Konfiguracja typów</h3>
+              <div className="grid gap-2">
+                <Label htmlFor="typSali">Domyślny typ sali i przedmiotów</Label>
+                <Select
+                  value={defaultConfig.typSalaPrzedmiotId}
+                  onValueChange={(value) =>
+                    setDefaultConfig((prev) => ({
+                      ...prev,
+                      typSalaPrzedmiotId: value,
+                    }))
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Ogólny" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {typySal.map((typ) => (
+                      <SelectItem key={typ.id} value={typ.id}>
+                        {typ.nazwa}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-sm text-muted-foreground">
+                  Ten typ będzie używany dla importowanych sal i przedmiotów
+                </p>
+              </div>
+            </div>
+
             {importConfig.sale && data.rooms?.length && (
-              <div className="space-y-4">
+              <div className="space-y-4 rounded-lg border p-4">
                 <h3 className="font-medium">Konfiguracja sal</h3>
                 <div className="grid gap-4">
                   <div className="grid gap-2">
@@ -427,7 +467,7 @@ export function ImportConfigDialog({
             )}
 
             {importConfig.nauczyciele && data.teachers?.length && (
-              <div className="space-y-4">
+              <div className="space-y-4 rounded-lg border p-4">
                 <h3 className="font-medium">Konfiguracja nauczycieli</h3>
                 <div className="grid gap-4">
                   <div className="grid gap-2">
@@ -446,53 +486,56 @@ export function ImportConfigDialog({
                       }
                     />
                   </div>
+
+                  <div className="space-y-4 pt-4 border-t">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="przedmioty"
+                        checked={importConfig.przedmioty}
+                        onCheckedChange={(checked) =>
+                          setImportConfig((prev) => ({
+                            ...prev,
+                            przedmioty: !!checked,
+                          }))
+                        }
+                      />
+                      <Label
+                        htmlFor="przedmioty"
+                        className="flex items-center gap-2"
+                      >
+                        Przedmioty
+                        <span className="text-sm text-muted-foreground">
+                          (automatycznie z planu)
+                        </span>
+                      </Label>
+                    </div>
+
+                    {importConfig.przedmioty && (
+                      <div className="grid gap-2">
+                        <Label htmlFor="przedmiotyWaga">
+                          Domyślna waga przedmiotów
+                        </Label>
+                        <Input
+                          id="przedmiotyWaga"
+                          type="number"
+                          min="1"
+                          max="10"
+                          value={defaultConfig.przedmiotyWaga}
+                          onChange={(e) =>
+                            setDefaultConfig((prev) => ({
+                              ...prev,
+                              przedmiotyWaga: e.target.value,
+                            }))
+                          }
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
 
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="przedmioty"
-                  checked={importConfig.przedmioty}
-                  onCheckedChange={(checked) =>
-                    setImportConfig((prev) => ({
-                      ...prev,
-                      przedmioty: !!checked,
-                    }))
-                  }
-                />
-                <Label htmlFor="przedmioty" className="flex items-center gap-2">
-                  Przedmioty
-                  <span className="text-sm text-muted-foreground">
-                    (automatycznie z planu)
-                  </span>
-                </Label>
-              </div>
-
-              {importConfig.przedmioty && (
-                <div className="grid gap-2 pl-6">
-                  <Label htmlFor="przedmiotyWaga">
-                    Domyślna waga przedmiotów
-                  </Label>
-                  <Input
-                    id="przedmiotyWaga"
-                    type="number"
-                    min="1"
-                    max="10"
-                    value={defaultConfig.przedmiotyWaga}
-                    onChange={(e) =>
-                      setDefaultConfig((prev) => ({
-                        ...prev,
-                        przedmiotyWaga: e.target.value,
-                      }))
-                    }
-                  />
-                </div>
-              )}
-            </div>
-
-            <div className="flex justify-end gap-3">
+            <div className="flex justify-end gap-3 pt-2">
               <Button
                 variant="outline"
                 onClick={() => onOpenChange(false)}

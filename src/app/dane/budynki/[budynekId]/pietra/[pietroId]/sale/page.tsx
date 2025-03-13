@@ -62,6 +62,9 @@ export default async function PietroSalePage({ params }: Props) {
                 <div className="text-sm text-muted-foreground">
                   Liczba miejsc: {sala.liczbaMiejsc}
                 </div>
+                <div className="text-sm text-muted-foreground">
+                  Typ sali: {sala.typSalaPrzedmiot?.nazwa || "Ogólny"}
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 <EditSalaDialog sala={sala} budynki={budynki} />

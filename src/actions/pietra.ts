@@ -31,6 +31,7 @@ export async function getPietro(id: string) {
       budynek: true,
       sale: {
         include: {
+          typSalaPrzedmiot: true,
           pietro: {
             include: {
               budynek: true,

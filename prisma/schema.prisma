@@ -25,23 +25,36 @@ model Nauczyciel {
 }
 
 model Przedmiot {
-  id                String             @id @default(cuid())
-  nazwa             String             @unique
-  waga              Int
-  nauczyciele       Nauczyciel[]
-  przedmiotyOddzial PrzedmiotOddzial[]
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
+  id                 String             @id @default(cuid())
+  nazwa              String             @unique
+  waga               Int
+  typSalaPrzedmiot   TypSalaPrzedmiot   @relation(fields: [typSalaPrzedmiotId], references: [id])
+  nauczyciele        Nauczyciel[]
+  przedmiotyOddzial  PrzedmiotOddzial[]
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  typSalaPrzedmiotId String
+}
+
+model TypSalaPrzedmiot {
+  id         String      @id @default(cuid())
+  nazwa      String      @unique
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  sale       Sala[]
+  przedmioty Przedmiot[]
 }
 
 model Sala {
-  id           String   @id @default(cuid())
-  nazwa        String   @unique
-  liczbaMiejsc Int
-  pietroId     String
-  pietro       Pietro   @relation("PietroSale", fields: [pietroId], references: [id], onDelete: Cascade)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id                 String           @id @default(cuid())
+  nazwa              String           @unique
+  liczbaMiejsc       Int
+  typSalaPrzedmiot   TypSalaPrzedmiot @relation(fields: [typSalaPrzedmiotId], references: [id])
+  pietroId           String
+  pietro             Pietro           @relation("PietroSale", fields: [pietroId], references: [id], onDelete: Cascade)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  typSalaPrzedmiotId String
 }
 
 model Pietro {

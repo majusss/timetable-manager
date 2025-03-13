@@ -23,7 +23,7 @@ type ClassSchedule = {
 };
 
 // Definicje typów dla zapytań
-const includeOptions = {
+const oddzialInclude = {
   przedmiotyOddzial: {
     include: {
       przedmiot: true,
@@ -32,7 +32,11 @@ const includeOptions = {
 } satisfies Prisma.OddzialInclude;
 
 const przedmiotInclude = {
-  przedmiot: true,
+  przedmiot: {
+    include: {
+      typSalaPrzedmiot: true,
+    },
+  },
   oddzial: true,
 } satisfies Prisma.PrzedmiotOddzialInclude;
 
@@ -46,10 +50,11 @@ const salaInclude = {
       budynek: true,
     },
   },
+  typSalaPrzedmiot: true,
 } satisfies Prisma.SalaInclude;
 
 type OddzialResult = Prisma.OddzialGetPayload<{
-  include: typeof includeOptions;
+  include: typeof oddzialInclude;
 }>;
 
 type PrzedmiotOddzialResult = Prisma.PrzedmiotOddzialGetPayload<{
@@ -164,7 +169,7 @@ export class TimetableGenerator {
 
   private async fetchData() {
     return Promise.all([
-      prisma.oddzial.findMany({ include: includeOptions }),
+      prisma.oddzial.findMany({ include: oddzialInclude }),
       prisma.przedmiotOddzial.findMany({ include: przedmiotInclude }),
       prisma.nauczyciel.findMany({ include: nauczycielInclude }),
       prisma.sala.findMany({ include: salaInclude }),
@@ -252,10 +257,12 @@ export class TimetableGenerator {
       throw new Error("Brak dostępnego nauczyciela");
     }
 
-    // Znajdź dostępną salę
-    const availableRoom = this.findAvailableRoom(timeSlot, sale);
+    // Znajdź dostępną salę zgodną z typem przedmiotu
+    const availableRoom = this.findAvailableRoom(timeSlot, sale, lesson);
     if (!availableRoom) {
-      throw new Error("Brak dostępnej sali");
+      throw new Error(
+        `Brak dostępnej sali typu ${lesson.przedmiot.typSalaPrzedmiotId} dla przedmiotu ${lesson.przedmiot.nazwa}`,
+      );
     }
 
     return {
@@ -283,9 +290,14 @@ export class TimetableGenerator {
   private findAvailableRoom(
     timeSlot: string,
     sale: SalaResult[],
+    lesson: PrzedmiotOddzialResult,
   ): SalaResult | null {
     return (
-      sale.find((s) => !this.roomAvailability.get(s.id)?.has(timeSlot)) || null
+      sale.find(
+        (s) =>
+          !this.roomAvailability.get(s.id)?.has(timeSlot) &&
+          s.typSalaPrzedmiotId === lesson.przedmiot.typSalaPrzedmiotId,
+      ) || null
     );
   }
 

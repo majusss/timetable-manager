@@ -8,7 +8,11 @@ import { PrzedmiotForm } from "./components/przedmiot-form";
 import { PrzedmiotGodziny } from "./components/przedmiot-godziny";
 
 export default async function PrzedmiotyPage() {
-  const przedmioty = await db.przedmiot.findMany();
+  const przedmioty = await db.przedmiot.findMany({
+    include: {
+      typSalaPrzedmiot: true,
+    },
+  });
   const headersList = await headers();
   const referer = headersList.get("referer") || "";
   const isFromNauczyciele = referer.includes("/nauczyciele");
@@ -48,6 +52,8 @@ export default async function PrzedmiotyPage() {
                 <div className="font-medium">{przedmiot.nazwa}</div>
                 <div className="text-sm text-muted-foreground">
                   Waga: {przedmiot.waga}
+                  <br />
+                  Typ sali: {przedmiot.typSalaPrzedmiot.nazwa}
                 </div>
                 <PrzedmiotGodziny przedmiotId={przedmiot.id} />
               </div>
